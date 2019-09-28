@@ -7,11 +7,6 @@ from pathlib import Path
 import os
 from PIL import Image
 
-from werkzeug.utils import secure_filename
-
-UPLOAD_FOLDER = 'uploaded'
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
-
 app = Flask(__name__)
 
 app.config.from_object(__name__)
