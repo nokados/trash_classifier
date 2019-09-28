@@ -1,3 +1,7 @@
+Классификатор мусора.
+
+Команда: **Next City** (стол 7)
+
 ## Requirements
 
 - Python 3.6.5+
@@ -18,4 +22,3 @@
 Возвращаю json формата
 
 `{'category': 'glass', 'probability': 0.95}`
-
