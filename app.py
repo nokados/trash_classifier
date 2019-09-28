@@ -7,10 +7,16 @@ from pathlib import Path
 import os
 from PIL import Image
 
+from werkzeug.utils import secure_filename
+
+UPLOAD_FOLDER = 'uploaded'
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+
 app = Flask(__name__)
+
 app.config.from_object(__name__)
 
-dest_path = './resized'
+dest_path = 'resized'
 if not os.path.exists(dest_path):
     os.makedirs(dest_path)
 WIDTH = 512; HEIGHT = 384
@@ -20,13 +26,12 @@ path = Path(os.getcwd())
 learn = load_learner(path, 'trashclf.pkl')
 
 
-@app.route('/', methods=['GET'])
+@app.route('/', methods=['POST'])
 def analyze_trash_photo():
-    if request.args and 'path' in request.args:
-        path = request.args.get('path')
-    else:
-        return "NO path have gotten"
-    new_path = prepare_image(path)
+    if 'file' not in request.files:
+        return 'No file part: ' + ', '.join(request.files.keys()) 
+    file = request.files['file']
+    new_path = prepare_image(file.stream, file.filename)
     myimg = open_image(new_path)
     pred = learn.predict(myimg)
     cat_text = pred[0].obj
@@ -34,9 +39,10 @@ def analyze_trash_photo():
     prob = float(pred[2][cat])
     return jsonify({'category': cat_text, 'probability': prob})
 
-def prepare_image(image_path):
+def prepare_image(image_path, name):
     pic = Image.open(image_path)
-    name = os.path.basename(image_path)
+    pic = pic.convert("RGB")
+
     w, h = pic.size
     new_h = int(max(HEIGHT, h * WIDTH/w))
     pic = pic.resize((WIDTH, new_h))
@@ -46,4 +52,4 @@ def prepare_image(image_path):
     return save_path
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host= '0.0.0.0')
