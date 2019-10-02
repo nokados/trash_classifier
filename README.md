@@ -1,5 +1,9 @@
 Классификатор мусора.
 
+https://разделяйкин.рф
+
+Основное приложение - https://github.com/morozec/GarbageCollector
+
 Команда: **Next City** (стол 7)
 
 ## Requirements
